@@ -34,18 +34,22 @@ class World:
     #    key = str(tile_id) if isinstance(tile_id, int) else tile_id
     #    return key == "13"
 
-    def draw_layer(self, map, atlas, width, height):
+    def draw_layer(self, map, atlas, width, height, camera=None):
         self.map = map
         rows = len(map)
         cols = len(map[0]) if rows > 0 else 0
         for row in range(rows):
             for col in range(cols):
                 for i in atlas.keys():
+                    if camera:
+                        sc_x = (col * width) - camera.x
+                        sc_y = (row * height) - camera.y
+                    else:
+                        sc_x = col * width
+                        sc_y = row * height
                     tile = map[row][col]
-                    x = col * width
-                    y = row * height
                     if tile == i:
-                        self.draw_tile(i, x, y, atlas, width, height)
+                        self.draw_tile(i, sc_x, sc_y, atlas, width, height)
 
     def can_move_to(self, rect, tile_size, blocked_tiles, map):
         corners = [

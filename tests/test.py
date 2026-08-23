@@ -2,6 +2,8 @@ from libGML.graphics.sprite import Sprite
 from libGML.input.keyboard import Keyboard
 from libGML.core.world import World
 from libGML.graphics.transform import Transform
+from libGML.core.camera import Camera
+from libGML.core.vector2 import Vector2
 import pygame
 
 pygame.init()
@@ -13,11 +15,12 @@ keyboard = Keyboard()
 sprites = Sprite()
 world = World(sc)
 transform = Transform()
+camera = Camera()
 
 speed = 5
 texture = sprites.load_texture("player_test.png").convert_alpha()
 
-test = sprites.create_sprite(100, 110, 32, 32, texture)
+test = sprites.create_sprite(100, 110, 32, 32)
 texture = transform.scale((32, 32), texture)
 map = world.load_room("roomTest.json")
 
@@ -36,10 +39,22 @@ atlas = {
         "8": pygame.image.load("assets/walback.png").convert_alpha(),
                     }
 
+animations = {
+    "up": sprites.load_texture("pl_up.png").convert_alpha(),
+    "down": sprites.load_texture("pl_down.png").convert_alpha(),
+    "left": sprites.load_texture("pl_side.png").convert_alpha(),
+    "right": sprites.load_texture("pl_side.png").convert_alpha()
+}
+
+testiruem = [sprites.load_texture("pl_up.png").convert_alpha(), sprites.load_texture("pl_down.png").convert_alpha(), sprites.load_texture("pl_side.png").convert_alpha()]
+
 blocked_tiles = ["11", "9", "10", "8"]
+
+key = 0
 
 while True:
     pygame.event.pump()
+    dt = clock.tick(60) / 1000.0
 
     for events in pygame.event.get():
         if events.type == pygame.QUIT:
@@ -71,9 +86,14 @@ while True:
             test = new_test
 
     sc.fill((20, 20, 30))
-    world.draw_layer(map["map"], atlas, 32, 32)
 
-    sprites.draw(sc, test, texture)
+    camera.follow(test, sc)
+    world.draw_layer(map["map"], atlas, 32, 32, camera)
+
+    key = sprites.get_frame(testiruem, key, dt, delay=0.5)
+    texture = testiruem[key]
+
+    sprites.draw(sc, test, texture, camera)
 
     clock.tick(60)
     pygame.display.set_caption(str(clock.get_fps()))
