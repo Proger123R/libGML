@@ -1,11 +1,12 @@
 import pygame
 import json
+import csv
 
 class World:
     def __init__(self, sc):
         self.sc = sc
 
-    def load_room(self, filename):
+    def load_room_json(self, filename):
         with open(filename, 'r', encoding='utf-8') as f:
             data = json.load(f)
         return data
@@ -15,24 +16,29 @@ class World:
         wallModed = pygame.transform.scale(wall, (width, height))
         self.sc.blit(wallModed, (x, y))
 
-    #def trigger_room(self, player_rect):
-    #    if self.map_l2 is None:
-    #        return None
+    def load_room_csv(self, filename):
+        with open(filename) as f:
+            reader = csv.reader(f)
+            return list(reader)
 
-    #    col = player_rect.centerx // BrickWallX
-    #    row = player_rect.centery // BrickWallX
+    def trigger_tile(self, player_rect, tile_size, map, tile):
+        if map is None:
+            return None
 
-    #    rows = len(self.map_l2)
-    #    if rows == 0:
-    #        return False
-    #    cols = len(self.map_l2[0])
+        col = player_rect.centerx // tile_size
+        row = player_rect.centery // tile_size
 
-    #    if not (0 <= row < rows and 0 <= col < cols):
-    #        return False
+        rows = len(map)
+        if rows == 0:
+            return False
+        cols = len(map[0])
 
-    #    tile_id = self.map_l2[row][col]
-    #    key = str(tile_id) if isinstance(tile_id, int) else tile_id
-    #    return key == "13"
+        if not (0 <= row < rows and 0 <= col < cols):
+            return False
+
+        tile_id = map[row][col]
+        key = str(tile_id) if isinstance(tile_id, int) else tile_id
+        return key == tile
 
     def draw_layer(self, map, atlas, width, height, camera=None):
         self.map = map

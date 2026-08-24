@@ -22,33 +22,15 @@ texture = sprites.load_texture("player_test.png").convert_alpha()
 
 test = sprites.create_sprite(100, 110, 32, 32)
 texture = transform.scale((32, 32), texture)
-map = world.load_room("roomTest.json")
+map = world.load_room_csv("mapL1.csv")
+mapL2 = world.load_room_csv("mapL2.csv")
 
-atlas = {
-        "9": pygame.image.load("assets/walleft.png").convert_alpha(),
-        "10": pygame.image.load("assets/wallford.png").convert_alpha(),
-        "12": pygame.image.load("assets/spawn.png").convert_alpha(),
-        "11": pygame.image.load("assets/cube_test.png").convert_alpha(),
-        "1": pygame.image.load("assets/map-tiles/g1.png").convert_alpha(),
-        "2": pygame.image.load("assets/map-tiles/g2.png").convert_alpha(),
-        "3": pygame.image.load("assets/map-tiles/g3.png").convert_alpha(),
-        "4": pygame.image.load("assets/map-tiles/g4.png").convert_alpha(),
-        "5": pygame.image.load("assets/map-tiles/g5.png").convert_alpha(),
-        "6": pygame.image.load("assets/map-tiles/g6.png").convert_alpha(),
-        "7": pygame.image.load("assets/map-tiles/g7.png").convert_alpha(),
-        "8": pygame.image.load("assets/walback.png").convert_alpha(),
-                    }
-
-animations = {
-    "up": sprites.load_texture("pl_up.png").convert_alpha(),
-    "down": sprites.load_texture("pl_down.png").convert_alpha(),
-    "left": sprites.load_texture("pl_side.png").convert_alpha(),
-    "right": sprites.load_texture("pl_side.png").convert_alpha()
-}
+tileset = pygame.image.load("tileset.png").convert_alpha()
+atlas = sprites.cutTileSet(tileset, 16, 16)
 
 testiruem = [sprites.load_texture("pl_up.png").convert_alpha(), sprites.load_texture("pl_down.png").convert_alpha(), sprites.load_texture("pl_side.png").convert_alpha()]
 
-blocked_tiles = ["11", "9", "10", "8"]
+blocked_tiles = ['4', '16', '97', '98', '99', '109', '110', '111', '121', '122', '123']
 
 key = 0
 
@@ -64,31 +46,33 @@ while True:
         dy = 0
         dy -= speed
         new_test = sprites.move((0, dy), test)
-        if world.can_move_to(new_test, 32, blocked_tiles, map['map']):
+        if world.can_move_to(new_test, 32, blocked_tiles, mapL2):
             test = new_test
     if keyboard.is_pressed("A"):
         dx = 0
         dx -= speed
         new_test = sprites.move((dx, 0), test)
-        if world.can_move_to(new_test, 32, blocked_tiles, map['map']):
+        if world.can_move_to(new_test, 32, blocked_tiles, mapL2):
             test = new_test
     if keyboard.is_pressed("S"):
         dy = 0
         dy += speed
         new_test = sprites.move((0, dy), test)
-        if world.can_move_to(new_test, 32, blocked_tiles, map['map']):
+        if world.can_move_to(new_test, 32, blocked_tiles, mapL2):
             test = new_test
     if keyboard.is_pressed("D"):
         dx = 0
         dx += speed
         new_test = sprites.move((dx, 0), test)
-        if world.can_move_to(new_test, 32, blocked_tiles, map['map']):
+        if world.can_move_to(new_test, 32, blocked_tiles, mapL2):
             test = new_test
 
     sc.fill((20, 20, 30))
 
     camera.follow(test, sc)
-    world.draw_layer(map["map"], atlas, 32, 32, camera)
+
+    world.draw_layer(map, atlas, 32, 32, camera)
+    world.draw_layer(mapL2, atlas, 32, 32, camera)
 
     key = sprites.get_frame(testiruem, key, dt, delay=0.5)
     texture = testiruem[key]

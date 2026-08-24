@@ -47,3 +47,13 @@ class Sprite:
             if current_index >= len(frames):
                 current_index = 0
         return current_index
+
+    def cutTileSet(self, tileset, width, height):
+        index = 0
+        tiles = {}
+        for y in range(0, tileset.get_height(), height):
+            for x in range(0, tileset.get_width(), width):
+                tile = tileset.subsurface((x, y, width, height))
+                tiles[f'{index}'] = tile
+                index += 1
+        return tiles
